@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  nginx:
+    container_name: nginx
+    image: 'nginx:latest'
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./docker/nginx:/etc/nginx/conf.d/
+      - .:/var/www/
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+  php:
+    container_name: php
+    build:
+      context: ./docker/php/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/var/www/
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
